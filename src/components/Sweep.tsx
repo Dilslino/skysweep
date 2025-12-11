@@ -24,6 +24,9 @@ export const Sweep: React.FC<SweepProps> = ({ user }) => {
   const [isExpandingPrediction, setIsExpandingPrediction] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchResults, setSearchResults] = useState<Location[]>([]);
+  const [isSearching, setIsSearching] = useState(false);
   
   // Prediction Inputs
   const [selectedCondition, setSelectedCondition] = useState<WeatherCondition | null>(null);
@@ -34,6 +37,43 @@ export const Sweep: React.FC<SweepProps> = ({ user }) => {
   // Hooks
   const { createPrediction, refreshPredictions } = usePredictions();
   const { weather, loading: weatherLoading } = useWeather(selectedLocation.name);
+
+  // Search locations
+  useEffect(() => {
+    const searchLocations = async () => {
+      if (!searchQuery || searchQuery.length < 2) {
+        setSearchResults([]);
+        return;
+      }
+
+      setIsSearching(true);
+      try {
+        const WEATHER_API_KEY = 'af5c0bc3529e4ed2955165603251112';
+        const response = await fetch(
+          `https://api.weatherapi.com/v1/search.json?key=${WEATHER_API_KEY}&q=${encodeURIComponent(searchQuery)}`
+        );
+        
+        if (response.ok) {
+          const data = await response.json();
+          const locations: Location[] = data.map((item: any, index: number) => ({
+            id: `search-${index}`,
+            name: item.name,
+            country: item.country,
+            lat: item.lat,
+            lng: item.lon,
+          }));
+          setSearchResults(locations);
+        }
+      } catch (error) {
+        console.error('Search error:', error);
+      } finally {
+        setIsSearching(false);
+      }
+    };
+
+    const debounce = setTimeout(searchLocations, 300);
+    return () => clearTimeout(debounce);
+  }, [searchQuery]);
 
   // Countdown timer
   useEffect(() => {
@@ -137,17 +177,30 @@ export const Sweep: React.FC<SweepProps> = ({ user }) => {
                   <input 
                     type="text" 
                     placeholder="Search city..." 
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
                     className="w-full bg-slate-950 rounded-lg pl-9 pr-4 py-2 text-sm text-white focus:outline-none focus:ring-1 focus:ring-indigo-500" 
                   />
                 </div>
               </div>
               <div className="max-h-48 overflow-y-auto">
-                {MOCK_LOCATIONS.map(loc => (
+                {isSearching && (
+                  <div className="p-4 text-center text-slate-500 text-sm">
+                    Searching...
+                  </div>
+                )}
+                {!isSearching && searchQuery && searchResults.length === 0 && (
+                  <div className="p-4 text-center text-slate-500 text-sm">
+                    No results found
+                  </div>
+                )}
+                {(searchQuery ? searchResults : MOCK_LOCATIONS).map(loc => (
                   <button
                     key={loc.id}
                     onClick={() => {
                       setSelectedLocation(loc);
                       setShowLocationSelect(false);
+                      setSearchQuery('');
                     }}
                     className={`w-full flex items-center justify-between p-3 text-sm hover:bg-slate-800 ${selectedLocation.id === loc.id ? 'text-indigo-400 bg-slate-800/50' : 'text-slate-300'}`}
                   >
