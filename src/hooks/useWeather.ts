@@ -57,9 +57,8 @@ export function useWeather(location: string) {
     async function loadWeather() {
       try {
         setLoading(true);
-        const response = await weatherApi.get('/forecast', {
-          params: { location, days: 7 }
-        });
+        setError(null);
+        const response = await weatherApi.get(`/forecast?location=${encodeURIComponent(location)}&days=7`);
         setWeather(response.data);
       } catch (err) {
         console.error('Error loading weather:', err);
