@@ -1,0 +1,5 @@
+{
+  "name": "SkySweep",
+  "description": "A competitive weather prediction game where users forecast daily weather, earn points, and climb rankings.",
+  "requestFramePermissions": []
+}
