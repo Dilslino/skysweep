@@ -45,17 +45,7 @@ export const api = {
       return mockAuthenticatedFetch(endpoint, options);
     }
     
-    // Try to use Farcaster SDK if available
-    try {
-      const { sdk } = await import('@farcaster/miniapp-sdk');
-      if (sdk?.quickAuth?.fetch) {
-        return sdk.quickAuth.fetch(`${API_BASE_URL}${endpoint}`, options);
-      }
-    } catch (e) {
-      console.warn('Farcaster SDK error:', e);
-    }
-    
-    // Fallback to regular fetch with Authorization header
+    // Use regular fetch for now (Farcaster SDK disabled for testing)
     const token = localStorage.getItem('farcaster_token');
     return fetch(`${API_BASE_URL}${endpoint}`, {
       ...options,

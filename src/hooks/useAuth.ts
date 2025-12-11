@@ -35,16 +35,8 @@ export function useAuth() {
         const userData = await api.get('/auth/me');
         setUser(userData);
         
-        // Try to notify Farcaster SDK if available
-        try {
-          const { sdk } = await import('@farcaster/miniapp-sdk');
-          if (sdk?.actions?.ready) {
-            sdk.actions.ready();
-          }
-        } catch (e) {
-          // SDK not available, continue without it
-          console.info('Running without Farcaster SDK');
-        }
+        // Farcaster SDK disabled for testing
+        console.info('Running without Farcaster SDK - testing mode');
       } catch (err) {
         console.error('Auth error:', err);
         const errorMessage = err instanceof Error ? err.message : 'Failed to load user';
