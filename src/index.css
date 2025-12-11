@@ -1,0 +1,30 @@
+/* Import Tailwind CSS */
+@import "tailwindcss";
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Safe area padding for mobile */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+/* Base app styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #020617;
+  margin: 0;
+  padding: 0;
+}
