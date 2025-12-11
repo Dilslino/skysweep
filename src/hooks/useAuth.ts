@@ -28,26 +28,28 @@ export function useAuth() {
         const backendAvailable = await checkBackendHealth();
         
         if (!backendAvailable) {
-          console.warn('Backend not available, running in demo mode');
+          console.warn('Backend not available');
           setIsDemoMode(true);
+          setLoading(false);
+          return;
         }
 
-        const userData = await api.get('/auth/me');
-        setUser(userData);
+        // Try to load user if token exists
+        const token = localStorage.getItem('farcaster_token');
+        if (token) {
+          try {
+            const userData = await api.get('/auth/me');
+            setUser(userData);
+          } catch (err) {
+            console.warn('Token invalid or expired');
+            localStorage.removeItem('farcaster_token');
+          }
+        }
         
         // Farcaster SDK disabled for testing
         console.info('Running without Farcaster SDK - testing mode');
       } catch (err) {
         console.error('Auth error:', err);
-        const errorMessage = err instanceof Error ? err.message : 'Failed to load user';
-        
-        // If it's demo mode error, show friendly message
-        if (errorMessage.includes('Demo mode') || errorMessage.includes('Backend not available')) {
-          setError('Demo mode: Deploy backend to enable full functionality');
-          setIsDemoMode(true);
-        } else {
-          setError(errorMessage);
-        }
       } finally {
         setLoading(false);
       }
