@@ -3,8 +3,8 @@ import axios from 'axios';
 const API_BASE_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:8787/api';
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:8787';
 
-// Check if we're in development mode without backend
-const isDemoMode = import.meta.env.MODE === 'production' && (!import.meta.env.VITE_BACKEND_URL || import.meta.env.VITE_BACKEND_URL === 'http://localhost:8787');
+// DISABLE demo mode - always try real backend
+const isDemoMode = false;
 
 // Helper to check if backend is available
 export const checkBackendHealth = async (): Promise<boolean> => {
