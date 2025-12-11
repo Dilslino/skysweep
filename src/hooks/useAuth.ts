@@ -38,7 +38,9 @@ export function useAuth() {
         // Try to notify Farcaster SDK if available
         try {
           const { sdk } = await import('@farcaster/miniapp-sdk');
-          sdk.actions.ready();
+          if (sdk?.actions?.ready) {
+            sdk.actions.ready();
+          }
         } catch (e) {
           // SDK not available, continue without it
           console.info('Running without Farcaster SDK');
