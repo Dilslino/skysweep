@@ -134,12 +134,14 @@ export const Sweep: React.FC<SweepProps> = ({ user }) => {
   };
 
   // Get current weather data
+  console.log('🔍 Current weather object:', weather);
   const currentTemp = weather?.current?.temp_c || 23;
-  const currentCondition = weather?.current?.condition.text || 'Clear';
+  const currentCondition = weather?.current?.condition?.text || 'Clear';
   const feelsLike = weather?.current?.feelslike_c || currentTemp + 2;
   const humidity = weather?.current?.humidity || 65;
   const currentWind = weather?.current?.wind_kph || 12;
   const pressure = weather?.current?.pressure_mb || 1012;
+  console.log('📊 Display values - Temp:', currentTemp, 'Humidity:', humidity, 'Wind:', currentWind);
 
   // Get hourly forecast
   const hourlyData = weather?.forecast?.forecastday[0]?.hour || [];

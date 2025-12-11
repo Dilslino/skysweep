@@ -55,13 +55,17 @@ export function useWeather(location: string) {
 
   useEffect(() => {
     async function loadWeather() {
+      console.log('🌤️ Loading weather for:', location);
       try {
         setLoading(true);
         setError(null);
-        const response = await weatherApi.get(`/forecast?location=${encodeURIComponent(location)}&days=7`);
+        const url = `/forecast?location=${encodeURIComponent(location)}&days=7`;
+        console.log('🌐 Fetching:', weatherApi.defaults.baseURL + url);
+        const response = await weatherApi.get(url);
+        console.log('✅ Weather data received:', response.data);
         setWeather(response.data);
       } catch (err) {
-        console.error('Error loading weather:', err);
+        console.error('❌ Error loading weather:', err);
         setError('Failed to load weather data');
       } finally {
         setLoading(false);
