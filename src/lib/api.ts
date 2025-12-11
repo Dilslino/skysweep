@@ -48,12 +48,22 @@ export const api = {
     // Try to use Farcaster SDK if available
     try {
       const { sdk } = await import('@farcaster/miniapp-sdk');
-      return sdk.quickAuth.fetch(`${API_BASE_URL}${endpoint}`, options);
+      if (sdk?.quickAuth?.fetch) {
+        return sdk.quickAuth.fetch(`${API_BASE_URL}${endpoint}`, options);
+      }
     } catch (e) {
-      // Fallback to regular fetch with mock
-      console.warn('Farcaster SDK not available, using demo mode');
-      return mockAuthenticatedFetch(endpoint, options);
+      console.warn('Farcaster SDK error:', e);
     }
+    
+    // Fallback to regular fetch with Authorization header
+    const token = localStorage.getItem('farcaster_token');
+    return fetch(`${API_BASE_URL}${endpoint}`, {
+      ...options,
+      headers: {
+        ...options.headers,
+        ...(token && { 'Authorization': `Bearer ${token}` }),
+      },
+    });
   },
   
   async get(endpoint: string) {
